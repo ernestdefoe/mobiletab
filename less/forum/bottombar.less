@@ -1,0 +1,238 @@
+// ─────────────────────────────────────────────────────────────
+// Mobile Tab Bar — MobileTab
+// ─────────────────────────────────────────────────────────────
+//
+// z-index reference (Flarum core):
+//   header:   1000
+//   pane:     1010
+//   composer: 1020  ← Composer sits above bar
+//   dropdown: 1030
+//   modal:    1050
+//
+// Bar sits at 1010 — above header, same level as pane,
+// below composer/dropdowns/modals.
+// ─────────────────────────────────────────────────────────────
+
+@mobiletab-bar-height: 60px;
+@mobiletab-plus-size:  48px;
+
+// ── Always hide on tablet and desktop ────────────────────────
+// The bar is always mounted to the DOM. CSS controls visibility
+// so we never rely on JS viewport detection at mount time.
+
+@media @tablet-up {
+    .MobileTab-bar {
+        display: none !important;
+    }
+}
+
+// ── Phone styles ─────────────────────────────────────────────
+
+@media @phone {
+
+    // ── Bar container ─────────────────────────────────────────
+
+    .MobileTab-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: @mobiletab-bar-height;
+        background: var(--header-bg);
+        border-top: 1px solid var(--control-bg-shaded);
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        z-index: 1010;
+        // Allow the FAB to break above the bar top edge
+        overflow: visible;
+    }
+
+    // ── Tab items ─────────────────────────────────────────────
+
+    .MobileTab-tab {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        flex: 1;
+        height: 100%;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        color: var(--muted-color);
+        padding: 0;
+        font-family: inherit;
+
+        &:hover,
+        &:focus {
+            text-decoration: none;
+            color: var(--muted-color);
+        }
+
+        &.active {
+            color: var(--primary-color);
+
+            .MobileTab-tab-icon i {
+                color: var(--primary-color);
+            }
+        }
+    }
+
+    .MobileTab-tab-icon {
+        position: relative;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        i {
+            font-size: 18px;
+            color: var(--muted-color);
+        }
+    }
+
+    .MobileTab-tab-label {
+        font-size: 10px;
+        font-weight: 500;
+        line-height: 1;
+        color: inherit;
+    }
+
+    // ── Unread badge on Notifications tab ─────────────────────
+
+    .MobileTab-tab-badge {
+        position: absolute;
+        top: -2px;
+        right: -6px;
+        min-width: 16px;
+        height: 16px;
+        border-radius: 999px;
+        background: var(--primary-color);
+        color: var(--button-primary-color);
+        font-size: 9px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 3px;
+        border: 2px solid var(--header-bg);
+    }
+
+    // ── + New Discussion FAB ──────────────────────────────────
+    // Circle raised so ~20% of the button extends above the bar.
+    //
+    // Button height:  48px
+    // 20% above bar:  ~10px above bar top edge
+    //
+    // The bar is 60px tall, centered content sits at 30px from
+    // the bottom. To push the center of the 48px button up by
+    // 10px above the bar edge, we need to shift it up from its
+    // natural centered position. The total upward offset from
+    // center is: (bar_height/2) + 10 = 30 + 10 = 40px, and
+    // since we're using margin-bottom to lift within a flex row:
+    //   margin-bottom = (button_size × 0.20) × 2 = ~20px
+    // This lifts the button 10px above the bar's top edge.
+    // overflow:visible on .MobileTab-bar allows the overflow.
+
+    .MobileTab-bar-plus {
+        width: @mobiletab-plus-size;
+        height: @mobiletab-plus-size;
+        border-radius: 50%;
+        background: var(--button-primary-bg);
+        color: var(--button-primary-color);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px var(--shadow-color);
+
+        i {
+            font-size: 18px;
+            color: var(--button-primary-color);
+        }
+
+        &:active {
+            transform: scale(0.95);
+        }
+
+        &[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+    // ── Session tab ───────────────────────────────────────────
+    // Renders the real Flarum SessionDropdown inside the tab
+    // slot. We restyle the toggle button to match the other
+    // tabs: avatar + "Profile" label, column layout.
+    // The Dropdown-menu is left unstyled — Flarum's @phone rules
+    // in Dropdown.less already make it a full-width bottom sheet.
+
+    .MobileTab-tab--session {
+        flex: 1;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        // SessionDropdown wrapper — fill the tab slot
+        .SessionDropdown {
+            width: 100%;
+            height: 100%;
+        }
+
+        // Toggle button — strip default Button--user styling,
+        // display as column tab (avatar + "Profile" label)
+        .SessionDropdown > .Dropdown-toggle.Button--user {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            width: 100%;
+            height: 100%;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            padding: 0;
+            color: var(--muted-color);
+
+            // Hide the username text — avatar + label is enough
+            .Button-label {
+                display: none !important;
+            }
+
+            // Shrink avatar to match other tab icons
+            .Avatar {
+                width: 24px !important;
+                height: 24px !important;
+                font-size: 11px !important;
+                flex-shrink: 0;
+            }
+
+            // "Profile" label below the avatar
+            &::after {
+                content: 'Profile';
+                font-size: 10px;
+                font-weight: 500;
+                color: var(--muted-color);
+                line-height: 1;
+                white-space: nowrap;
+            }
+        }
+
+        // Bottom sheet menu — add padding so items clear our bar
+        .SessionDropdown .Dropdown-menu {
+            padding-bottom: 70px !important;
+        }
+    }
+
+}

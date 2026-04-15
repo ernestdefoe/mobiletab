@@ -1,0 +1,33 @@
+// ─────────────────────────────────────────────────────────────
+// Phone layout overrides
+// These compensate for the fixed bottom bar occupying 60px at
+// the bottom of the viewport.
+// ─────────────────────────────────────────────────────────────
+
+@mobiletab-bar-height: 60px;
+
+@media @phone {
+
+    // ── Page content — push up from behind the bar ────────────
+    // Flarum sets .App-content padding-bottom via --app-bottom-padding.
+    // We add our bar height on top so the last list item is never
+    // hidden behind the bar.
+    .App-content {
+        padding-bottom: @mobiletab-bar-height !important;
+    }
+
+    // ── Composer — sit above the bar ─────────────────────────
+    // When minimized, Flarum's Composer is position:fixed, bottom:0.
+    // We shift it up by the bar height so it doesn't overlap.
+    .Composer {
+        bottom: @mobiletab-bar-height !important;
+    }
+
+    // ── DiscussionList — remove Flarum's negative phone margin ─
+    // Flarum applies margin: 0 -15px on .DiscussionList at @phone.
+    // This causes horizontal overflow when our bar is present.
+    .DiscussionList {
+        margin: 0 !important;
+    }
+
+}
