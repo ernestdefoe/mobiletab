@@ -46,6 +46,9 @@
         z-index: 1010;
         // Allow the FAB to break above the bar top edge
         overflow: visible;
+        // z-index set in overrides.less: 1025 on @phone (above composer 1020)
+        // so the bar covers the composer during its hide animation.
+        // Base z-index 1010 here is overridden by overrides.less on @phone.
     }
 
     // ── Tab items ─────────────────────────────────────────────

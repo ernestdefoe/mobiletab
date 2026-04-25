@@ -17,10 +17,32 @@
     }
 
     // ── Composer — sit above the bar ─────────────────────────
-    // When minimized, Flarum's Composer is position:fixed, bottom:0.
-    // We shift it up by the bar height so it doesn't overlap.
-    .Composer {
+    //
+    // Flarum's Composer.js hide() animates bottom to a negative
+    // value using jQuery .animate(), which writes inline styles
+    // that override CSS bottom rules — even !important ones.
+    // Setting bottom on .Composer directly therefore breaks the
+    // hide animation (the composer gets stuck above the bar).
+    //
+    // Correct approach: raise the bar's z-index above the composer
+    // (1020) so the bar always visually covers the composer as it
+    // animates away. Then shift the VISIBLE composer states up
+    // only when they are not in the process of hiding, by targeting
+    // the specific position classes Flarum adds (.minimized, .normal).
+    //
+    // .Composer.minimized — always visible, shift up above bar
+    // .Composer.normal    — full-screen on phone, no bottom needed
+    // .Composer (hiding)  — no class match, jQuery animates freely
+
+    // Minimized state: shift up so it sits above the bar
+    .Composer.minimized {
         bottom: @mobiletab-bar-height !important;
+    }
+
+    // Bar z-index raised above composer (1020) so it covers the
+    // composer as it slides down during the hide animation
+    .MobileTab-bar {
+        z-index: 1025;
     }
 
     // ── DiscussionList — remove Flarum's negative phone margin ─
