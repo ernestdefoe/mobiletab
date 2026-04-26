@@ -1,5 +1,6 @@
 import app from 'flarum/forum/app';
 import { extend } from 'flarum/common/extend';
+import Avatar from 'flarum/common/components/Avatar';
 import SessionDropdown from 'flarum/forum/components/SessionDropdown';
 
 // ─────────────────────────────────────────────────────────────
@@ -121,14 +122,32 @@ const BottomBar = {
                 m('span.MobileTab-tab-label', 'Notifications'),
             ]),
 
-            // Profile — renders the real Flarum SessionDropdown.
-            // On @phone, Flarum's own Dropdown CSS makes the menu a
-            // full-width bottom sheet (position:fixed, left:0, right:0,
-            // bottom:0). We only restyle the toggle button to fit the
-            // tab slot via CSS.
-            m('div.MobileTab-tab.MobileTab-tab--session',
-                m(SessionDropdown)
-            ),
+            // Profile tab — two-layer approach:
+            //
+            // Layer 1 (visual): Our own Avatar + "Profile" label,
+            // rendered as a proper flex-column tab identical in
+            // structure to every other tab. No CSS fighting against
+            // Flarum's Button/Dropdown internals.
+            //
+            // Layer 2 (interactive): SessionDropdown positioned
+            // absolutely over the entire tab slot with opacity:0.
+            // It is invisible but fully clickable, so tapping anywhere
+            // in the tab triggers its dropdown menu. Flarum's own
+            // @phone Dropdown CSS turns that menu into a bottom sheet.
+            m('div.MobileTab-tab.MobileTab-tab--session', [
+
+                // Layer 1 — visible tab content
+                m('span.MobileTab-tab-icon',
+                    m(Avatar, { user, 'aria-hidden': 'true' })
+                ),
+                m('span.MobileTab-tab-label', 'Profile'),
+
+                // Layer 2 — invisible SessionDropdown, covers full tab
+                m('div.MobileTab-tab-sessionTrigger',
+                    m(SessionDropdown)
+                ),
+
+            ]),
 
         ]);
     },

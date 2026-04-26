@@ -172,70 +172,47 @@
     }
 
     // ── Session tab ───────────────────────────────────────────
-    // Renders the real Flarum SessionDropdown inside the tab
-    // slot. We restyle the toggle button to match the other
-    // tabs: avatar + "Profile" label, column layout.
-    // The Dropdown-menu is left unstyled — Flarum's @phone rules
-    // in Dropdown.less already make it a full-width bottom sheet.
+    // Two-layer approach — see index.ts for full explanation.
+    //
+    // Layer 1: .MobileTab-tab-icon (Avatar) + .MobileTab-tab-label
+    //   Rendered by us, identical flex-column structure to all tabs.
+    //   Avatar sized to 24px to match other tab icons.
+    //
+    // Layer 2: .MobileTab-tab-sessionTrigger (SessionDropdown wrapper)
+    //   Absolutely covers the entire tab slot. opacity:0 makes it
+    //   invisible. pointer-events:auto keeps it clickable so tapping
+    //   the tab triggers the SessionDropdown menu.
 
     .MobileTab-tab--session {
-        flex: 1;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        position: relative;
+        cursor: pointer;
 
-        // SessionDropdown wrapper — fill the tab slot
-        .SessionDropdown {
+        // Shrink the Avatar in layer 1 to match icon sizing
+        .MobileTab-tab-icon .Avatar {
+            .Avatar--size(24px);
+            font-size: 12px;
+        }
+    }
+
+    // Layer 2 wrapper — invisible, covers the full tab slot
+    .MobileTab-tab-sessionTrigger {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        pointer-events: auto;
+
+        // SessionDropdown and its toggle button fill the wrapper
+        .SessionDropdown,
+        .Dropdown-toggle {
             width: 100%;
             height: 100%;
+            display: block;
         }
+    }
 
-        // Toggle button — strip default Button--user styling,
-        // display as column tab (avatar + "Profile" label)
-        .SessionDropdown > .Dropdown-toggle.Button--user {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-            width: 100%;
-            height: 100%;
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-            border-radius: 0 !important;
-            padding: 0;
-            color: var(--muted-color);
-
-            // Hide the username text — avatar + label is enough
-            .Button-label {
-                display: none !important;
-            }
-
-            // Shrink avatar to match other tab icons
-            .Avatar {
-                width: 24px !important;
-                height: 24px !important;
-                font-size: 11px !important;
-                flex-shrink: 0;
-            }
-
-            // "Profile" label below the avatar
-            &::after {
-                content: 'Profile';
-                font-size: 10px;
-                font-weight: 500;
-                color: var(--muted-color);
-                line-height: 1;
-                white-space: nowrap;
-            }
-        }
-
-        // Bottom sheet menu — add padding so items clear our bar
-        .SessionDropdown .Dropdown-menu {
-            padding-bottom: 70px !important;
-        }
+    // Bottom sheet menu — add padding so items clear our bar
+    .MobileTab-tab--session .SessionDropdown .Dropdown-menu {
+        padding-bottom: 70px !important;
     }
 
 }
