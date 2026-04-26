@@ -220,15 +220,21 @@
                 display: none !important;
             }
 
-            // Size the avatar to match other tab icons
+            // Size the avatar to match other tab icons.
+            // Neutralize core's .SessionDropdown .Dropdown-toggle .Avatar
+            // rule (margin: -2px 0 -2px -6px) — that -6px left margin
+            // shifts the avatar left, misaligning it with ::after.
             .Avatar {
                 .Avatar--size(24px);
                 font-size: 12px;
                 flex-shrink: 0;
+                margin: 0 !important;
             }
 
             // "Profile" label — ::after on the button itself so it
-            // is a flex child of the column layout alongside .Avatar
+            // is a flex child of the column layout alongside .Avatar.
+            // width:100% + text-align:center keeps it centered under
+            // the avatar regardless of the text's natural width.
             &::after {
                 content: 'Profile';
                 font-size: 10px;
@@ -237,6 +243,8 @@
                 line-height: 1;
                 white-space: nowrap;
                 display: block;
+                width: 100%;
+                text-align: center;
             }
         }
 
