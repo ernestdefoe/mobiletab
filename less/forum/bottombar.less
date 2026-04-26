@@ -172,52 +172,78 @@
     }
 
     // ── Session tab ───────────────────────────────────────────
-    // Two-layer approach — see index.ts for full explanation.
+    // SessionDropdown rendered directly. We restyle only what is
+    // needed to make the toggle button lay out as a flex column
+    // matching the other tabs: avatar centered, "Profile" below.
     //
-    // Layer 1: .MobileTab-tab-icon (Avatar) + .MobileTab-tab-label
-    //   Rendered by us. Identical flex-column structure to all tabs.
-    //   Avatar sized to 24px to match other tab icons.
-    //
-    // Layer 2: .MobileTab-tab-sessionTrigger (SessionDropdown wrapper)
-    //   Hidden and out of flow (position:absolute, visibility:hidden).
-    //   Bootstrap initialises [data-toggle="dropdown"] on its button.
-    //   Clicking the tab triggers $(btn).dropdown('toggle') via onclick.
-    //   The Dropdown-menu is NOT hidden — it must be visible when open.
+    // The key fix vs the original: ::after is placed on the
+    // BUTTON element (which is the flex container we switch to
+    // column), not on an outer wrapper. This makes "Profile" a
+    // proper flex child of the same element as the Avatar, so
+    // both participate in the same flex layout and align correctly.
 
     .MobileTab-tab--session {
-        position: relative;
-        cursor: pointer;
+        flex: 1;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-        // Shrink the Avatar in layer 1 to match icon sizing
-        .MobileTab-tab-icon .Avatar {
-            .Avatar--size(24px);
-            font-size: 12px;
+        // Fill the tab slot
+        .SessionDropdown {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-    }
 
-    // Layer 2 wrapper — hidden, out of flow, zero size
-    // visibility:hidden hides it but keeps Bootstrap's DOM binding alive.
-    // The Dropdown-menu child overrides visibility when open (see below).
-    .MobileTab-tab-sessionTrigger {
-        position: absolute;
-        width: 0;
-        height: 0;
-        overflow: visible;
-        visibility: hidden;
-        bottom: 100%;
-        left: 50%;
-    }
+        // Toggle button: column layout matching other tabs
+        .Dropdown-toggle {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 3px !important;
+            width: 100% !important;
+            height: 100% !important;
+            padding: 0 !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            line-height: 1 !important;
 
-    // The Dropdown-menu must be visible when open, even though its
-    // parent wrapper is visibility:hidden. visibility is inherited,
-    // so we explicitly restore it on the menu element.
-    .MobileTab-tab-sessionTrigger .Dropdown-menu {
-        visibility: visible;
-    }
+            // Hide username text and caret — we only want avatar
+            .Button-label,
+            .Button-caret {
+                display: none !important;
+            }
 
-    // Bottom sheet menu — add padding so items clear our bar
-    .MobileTab-tab--session .SessionDropdown .Dropdown-menu {
-        padding-bottom: 70px !important;
+            // Size the avatar to match other tab icons
+            .Avatar {
+                .Avatar--size(24px);
+                font-size: 12px;
+                flex-shrink: 0;
+            }
+
+            // "Profile" label — ::after on the button itself so it
+            // is a flex child of the column layout alongside .Avatar
+            &::after {
+                content: 'Profile';
+                font-size: 10px;
+                font-weight: 500;
+                color: var(--muted-color);
+                line-height: 1;
+                white-space: nowrap;
+                display: block;
+            }
+        }
+
+        // Bottom sheet menu — padding clears our bar
+        .Dropdown-menu {
+            padding-bottom: 70px !important;
+        }
     }
 
 }

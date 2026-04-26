@@ -1,6 +1,5 @@
 import app from 'flarum/forum/app';
 import { extend } from 'flarum/common/extend';
-import Avatar from 'flarum/common/components/Avatar';
 import SessionDropdown from 'flarum/forum/components/SessionDropdown';
 
 // ─────────────────────────────────────────────────────────────
@@ -122,44 +121,11 @@ const BottomBar = {
                 m('span.MobileTab-tab-label', 'Notifications'),
             ]),
 
-            // Profile tab — two-layer approach:
-            //
-            // Layer 1 (visual): Our own Avatar + "Profile" label,
-            // rendered as a proper flex-column tab identical in
-            // structure to every other tab.
-            //
-            // Layer 2 (interactive): SessionDropdown rendered with
-            // visibility:hidden so it exists in the DOM and Bootstrap
-            // can initialize its [data-toggle="dropdown"] binding on
-            // the button, but the button is never seen. We attach an
-            // onclick to the tab wrapper that programmatically calls
-            // jQuery's .dropdown('toggle') on the hidden button,
-            // which fires Bootstrap's dropdown exactly as if the user
-            // had clicked the button directly.
-            m('div.MobileTab-tab.MobileTab-tab--session', {
-                onclick: (e: Event) => {
-                    // Find the hidden Dropdown-toggle button and trigger it
-                    const btn = (e.currentTarget as HTMLElement)
-                        .querySelector('.Dropdown-toggle') as HTMLElement | null;
-                    if (btn) $(btn).dropdown('toggle');
-                },
-            }, [
-
-                // Layer 1 — visible tab content
-                m('span.MobileTab-tab-icon',
-                    m(Avatar, { user, 'aria-hidden': 'true' })
-                ),
-                m('span.MobileTab-tab-label', 'Profile'),
-
-                // Layer 2 — SessionDropdown, hidden but DOM-present
-                // so Bootstrap initialises its event binding.
-                // visibility:hidden preserves layout space but hides
-                // it; position:absolute takes it out of flow entirely.
-                m('div.MobileTab-tab-sessionTrigger',
-                    m(SessionDropdown)
-                ),
-
-            ]),
+            // Profile — SessionDropdown rendered directly in the tab slot.
+            // CSS handles alignment.
+            m('div.MobileTab-tab.MobileTab-tab--session',
+                m(SessionDropdown)
+            ),
 
         ]);
     },
