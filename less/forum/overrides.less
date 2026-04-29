@@ -53,3 +53,21 @@
     }
 
 }
+
+// ── Avocado theme — correct inline reply composer position ───
+// Avocado checks html.has-mobile-tab (set by our initializer)
+// and shifts its .AvocadoMessages-inlineReply composer up by
+// 56px. Our bar is 60px, so we correct the 4px discrepancy.
+// We also correct the MessageStream padding-bottom (136px in
+// Avocado = 56px bar + 80px stream padding; we need 60px + 80px).
+html.has-mobile-tab {
+    @media @phone {
+        .AvocadoMessages-inlineReply {
+            bottom: @mobiletab-bar-height !important;
+        }
+
+        .AvocadoMessages-chatCol .MessageStream {
+            padding-bottom: (@mobiletab-bar-height + 80px) !important;
+        }
+    }
+}

@@ -147,6 +147,11 @@ app.initializers.add(EXTENSION_ID, () => {
         el.id = MOUNT_ID;
         document.body.appendChild(el);
         m.mount(el, BottomBar);
+
+        // Signal to other extensions (e.g. Avocado) that the mobile
+        // tab bar is present. Avocado checks html.has-mobile-tab to
+        // shift its inline reply composer above the bar.
+        document.documentElement.classList.add('has-mobile-tab');
     });
 
     // Patch m.route.set so the bar redraws on every navigation.
