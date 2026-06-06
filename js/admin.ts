@@ -1,1 +1,1 @@
-import './src/admin/index';
+export * from './src/admin/index';
