@@ -15,8 +15,8 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/ernestdefoe/mobile-tab/issues",
-        "source": "https://github.com/ernestdefoe/mobile-tab"
+        "issues": "https://github.com/ernestdefoe/mobiletab/issues",
+        "source": "https://github.com/ernestdefoe/mobiletab"
     },
     "require": {
         "flarum/core": "^2.0"
