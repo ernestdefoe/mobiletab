@@ -1,6 +1,6 @@
 {
     "private": true,
-    "name": "@resofire/mobile-tab",
+    "name": "@ernestdefoe/mobile-tab",
     "version": "1.0.0",
     "scripts": {
         "dev": "webpack --mode development --watch",

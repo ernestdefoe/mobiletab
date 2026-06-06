@@ -1,13 +1,23 @@
 {
-    "name": "resofire/mobile-tab",
-    "description": "A mobile bottom tab bar for Flarum 2.x forums.",
+    "name": "ernestdefoe/mobile-tab",
+    "description": "A configurable mobile bottom tab bar for Flarum 2.x — build your own tabs (icon, label, destination), a raised center action, and a logo/favicon slot.",
     "type": "flarum-extension",
     "license": "MIT",
     "authors": [
         {
-            "name": "resofire"
+            "name": "Ernestdefoe",
+            "email": "ernestdefoe@gmail.com",
+            "role": "Maintainer"
+        },
+        {
+            "name": "resofire",
+            "role": "Original author"
         }
     ],
+    "support": {
+        "issues": "https://github.com/ernestdefoe/mobile-tab/issues",
+        "source": "https://github.com/ernestdefoe/mobile-tab"
+    },
     "require": {
         "flarum/core": "^2.0"
     },

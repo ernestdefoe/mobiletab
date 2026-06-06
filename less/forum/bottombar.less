@@ -255,3 +255,26 @@
     }
 
 }
+
+// ── Logo / favicon tab images (config-driven tabs) ───────────
+@media @phone {
+    .MobileTab-tab-logo {
+        height: 24px;
+        width: auto;
+        max-width: 30px;
+        object-fit: contain;
+        display: block;
+    }
+
+    // Logo/favicon used in the raised center slot
+    .MobileTab-bar-plus--logo {
+        background: var(--header-bg);
+        border: 1px solid var(--control-bg-shaded);
+
+        img {
+            height: 30px;
+            max-width: 40px;
+            object-fit: contain;
+        }
+    }
+}

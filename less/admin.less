@@ -1,0 +1,61 @@
+.MobileTabEditor {
+  &-list {
+    margin: 8px 0;
+  }
+  &-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+}
+
+.MobileTabRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px;
+  margin-bottom: 8px;
+  border: 1px solid var(--control-bg);
+  border-radius: 6px;
+
+  &-move {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  &-fields {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+
+    .FormControl {
+      width: auto;
+      flex: 1 1 110px;
+      min-width: 90px;
+    }
+  }
+  &-type,
+  &-vis {
+    flex: 0 0 auto !important;
+  }
+  &-auto {
+    color: var(--muted-color);
+    font-size: 12px;
+    font-style: italic;
+    min-width: 70px;
+  }
+  &-raised {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    margin: 0;
+    font-weight: normal;
+  }
+  &-remove {
+    color: var(--alert-error-color, #e8590c);
+  }
+}
