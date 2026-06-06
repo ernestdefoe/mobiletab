@@ -5,3 +5,11 @@ ernestdefoe-mobile-tab:
     add_tab: Add tab
     reset_default: Reset to default
     raised: Raised (center)
+    remove: Remove tab
+    preview_caption: Live preview (phone) — drag order with the arrows
+    field_type: Type
+    field_icon: Icon
+    field_label: Label
+    field_url: URL
+    field_visibility: Shown to
+    field_center: Center
