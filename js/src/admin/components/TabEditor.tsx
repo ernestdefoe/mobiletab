@@ -72,14 +72,16 @@ export default class TabEditor extends Component {
         Button.component({ className: 'Button Button--icon', icon: 'fas fa-chevron-up', disabled: i === 0, onclick: () => this.move(i, -1) }),
         Button.component({ className: 'Button Button--icon', icon: 'fas fa-chevron-down', disabled: i === this.tabs.length - 1, onclick: () => this.move(i, 1) }),
       ]),
+      // All fields are ALWAYS rendered (irrelevant ones hidden) so the child
+      // set never changes on type switch — otherwise Mithril mis-patches these
+      // unkeyed inputs and values bleed between fields.
       m('.MobileTabRow-fields', [
         m('select.FormControl.MobileTabRow-type', { value: tab.type, onchange: (e: any) => upd('type', e.target.value) },
           TAB_TYPES.map((ty) => m('option', { value: ty }, TYPE_LABELS[ty] || ty))),
-        showIcon
-          ? m('input.FormControl', { placeholder: 'icon e.g. fas fa-home', value: tab.icon || '', oninput: (e: any) => upd('icon', e.target.value) })
-          : m('span.MobileTabRow-auto', tab.type === 'profile' ? 'avatar' : 'auto image'),
+        m('input.FormControl', { placeholder: 'icon e.g. fas fa-home', value: tab.icon || '', oninput: (e: any) => upd('icon', e.target.value), style: showIcon ? '' : 'display:none' }),
+        m('span.MobileTabRow-auto', { style: showIcon ? 'display:none' : '' }, tab.type === 'profile' ? 'avatar' : 'auto image'),
         m('input.FormControl', { placeholder: 'label (optional)', value: tab.label || '', oninput: (e: any) => upd('label', e.target.value) }),
-        showUrl ? m('input.FormControl', { placeholder: '/path or https://…', value: tab.url || '', oninput: (e: any) => upd('url', e.target.value) }) : null,
+        m('input.FormControl', { placeholder: '/path or https://…', value: tab.url || '', oninput: (e: any) => upd('url', e.target.value), style: showUrl ? '' : 'display:none' }),
         m('select.FormControl.MobileTabRow-vis', { value: tab.visibility || 'all', onchange: (e: any) => upd('visibility', e.target.value) },
           Object.keys(VIS_LABELS).map((k) => m('option', { value: k }, VIS_LABELS[k]))),
         m('label.MobileTabRow-raised', [
