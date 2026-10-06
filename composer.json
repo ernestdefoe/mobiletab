@@ -15,6 +15,7 @@
         }
     ],
     "support": {
+        "forum": "https://discuss.flarum.org/d/39384-mobile-tab",
         "issues": "https://github.com/ernestdefoe/mobiletab/issues",
         "source": "https://github.com/ernestdefoe/mobiletab"
     },
