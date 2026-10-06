@@ -46,6 +46,10 @@ Originally created by [resofire](https://github.com/resofire). Rebranded and
 extended (configurable tab editor, logo/favicon slots) by
 [ernestdefoe](https://github.com/ernestdefoe), with full credit to the original author.
 
+## Discuss
+
+Questions, ideas and release notes: [Mobile Tab on discuss.flarum.org](https://discuss.flarum.org/d/39384-mobile-tab).
+
 ## License
 
 MIT — © ResofireV2 (original author).
