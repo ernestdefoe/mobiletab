@@ -1,6 +1,8 @@
 import app from 'flarum/admin/app';
-import Component from 'flarum/common/Component';
+import Component, { type ComponentAttrs } from 'flarum/common/Component';
 import Button from 'flarum/common/components/Button';
+import type Stream from 'flarum/common/utils/Stream';
+import type Mithril from 'mithril';
 import { TabConfig, DEFAULT_TABS, TAB_TYPES } from '../../common/tabs';
 
 declare const m: any;
@@ -35,8 +37,13 @@ const DEFAULT_ICONS: Record<string, string> = {
   profile: 'fas fa-user-circle',
 };
 
+export interface TabEditorAttrs extends ComponentAttrs {
+  /** The settings stream holding the tabs as JSON. */
+  stream: Stream<string>;
+}
+
 /** Full custom tab editor with a live preview, per-tab fields, and reordering. */
-export default class TabEditor extends Component {
+export default class TabEditor extends Component<TabEditorAttrs> {
   tabs: TabConfig[] = [];
 
   oninit(vnode: any) {
@@ -65,14 +72,31 @@ export default class TabEditor extends Component {
       m('label.MobileTabEditor-title', t('tabs_label')),
       m('p.helpText', t('tabs_help')),
       this.preview(),
-      m('.MobileTabEditor-list', this.tabs.map((tab, i) => this.row(tab, i))),
+      m(
+        '.MobileTabEditor-list',
+        this.tabs.map((tab, i) => this.row(tab, i))
+      ),
       m('.MobileTabEditor-actions', [
         Button.component(
-          { className: 'Button Button--primary Button--icon', icon: 'fas fa-plus', onclick: () => { this.tabs.push({ type: 'link', icon: 'fas fa-star', label: 'New', url: '/', visibility: 'all' }); this.commit(); } },
+          {
+            className: 'Button Button--primary Button--icon',
+            icon: 'fas fa-plus',
+            onclick: () => {
+              this.tabs.push({ type: 'link', icon: 'fas fa-star', label: 'New', url: '/', visibility: 'all' });
+              this.commit();
+            },
+          },
           t('add_tab')
         ),
         Button.component(
-          { className: 'Button Button--text', icon: 'fas fa-rotate-left', onclick: () => { this.tabs = JSON.parse(JSON.stringify(DEFAULT_TABS)); this.commit(); } },
+          {
+            className: 'Button Button--text',
+            icon: 'fas fa-rotate-left',
+            onclick: () => {
+              this.tabs = JSON.parse(JSON.stringify(DEFAULT_TABS));
+              this.commit();
+            },
+          },
           t('reset_default')
         ),
       ]),
@@ -97,52 +121,100 @@ export default class TabEditor extends Component {
     ]);
   }
 
-  field(label: string, control: any, hidden = false) {
+  field(label: Mithril.Children, control: any, hidden = false) {
     return m('.MobileTabField', { style: hidden ? 'display:none' : '' }, [m('span.MobileTabField-label', label), control]);
   }
 
   row(tab: TabConfig, i: number) {
-    const upd = (k: string, v: any) => { (tab as any)[k] = v; this.commit(); };
+    const upd = (k: string, v: any) => {
+      (tab as any)[k] = v;
+      this.commit();
+    };
     const showIcon = !['profile', 'logo', 'favicon'].includes(tab.type);
     const showUrl = tab.type === 'link';
 
     return m('.MobileTabRow', { key: i }, [
       m('.MobileTabRow-order', [
-        Button.component({ className: 'Button Button--icon MobileTabRow-moveBtn', icon: 'fas fa-chevron-up', disabled: i === 0, onclick: () => this.move(i, -1) }),
+        Button.component({
+          className: 'Button Button--icon MobileTabRow-moveBtn',
+          icon: 'fas fa-chevron-up',
+          disabled: i === 0,
+          onclick: () => this.move(i, -1),
+        }),
         m('span.MobileTabRow-num', i + 1),
-        Button.component({ className: 'Button Button--icon MobileTabRow-moveBtn', icon: 'fas fa-chevron-down', disabled: i === this.tabs.length - 1, onclick: () => this.move(i, 1) }),
+        Button.component({
+          className: 'Button Button--icon MobileTabRow-moveBtn',
+          icon: 'fas fa-chevron-down',
+          disabled: i === this.tabs.length - 1,
+          onclick: () => this.move(i, 1),
+        }),
       ]),
 
       // Fields are ALWAYS rendered (irrelevant ones hidden) so the child set
       // never changes on type switch — otherwise Mithril mis-patches the unkeyed
       // inputs and values bleed between fields.
       m('.MobileTabRow-grid', [
-        this.field(t('field_type'),
-          m('select.FormControl', { value: tab.type, onchange: (e: any) => upd('type', e.target.value) },
-            TAB_TYPES.map((ty) => m('option', { value: ty }, TYPE_LABELS[ty] || ty)))),
+        this.field(
+          t('field_type'),
+          m(
+            'select.FormControl',
+            { value: tab.type, onchange: (e: any) => upd('type', e.target.value) },
+            TAB_TYPES.map((ty) => m('option', { value: ty }, TYPE_LABELS[ty] || ty))
+          )
+        ),
 
-        this.field(t('field_icon'), m('.MobileTabRow-iconField', [
-          m('span.MobileTabRow-iconPreview', m('i', { className: this.glyph(tab) })),
-          m('input.FormControl', { placeholder: 'fas fa-home', value: tab.icon || '', oninput: (e: any) => upd('icon', e.target.value), style: showIcon ? '' : 'display:none' }),
-          m('span.MobileTabRow-auto', { style: showIcon ? 'display:none' : '' }, tab.type === 'profile' ? 'avatar (auto)' : 'site image (auto)'),
-        ])),
+        this.field(
+          t('field_icon'),
+          m('.MobileTabRow-iconField', [
+            m('span.MobileTabRow-iconPreview', m('i', { className: this.glyph(tab) })),
+            m('input.FormControl', {
+              placeholder: 'fas fa-home',
+              value: tab.icon || '',
+              oninput: (e: any) => upd('icon', e.target.value),
+              style: showIcon ? '' : 'display:none',
+            }),
+            m('span.MobileTabRow-auto', { style: showIcon ? 'display:none' : '' }, tab.type === 'profile' ? 'avatar (auto)' : 'site image (auto)'),
+          ])
+        ),
 
-        this.field(t('field_label'), m('input.FormControl', { placeholder: 'optional', value: tab.label || '', oninput: (e: any) => upd('label', e.target.value) })),
+        this.field(
+          t('field_label'),
+          m('input.FormControl', { placeholder: 'optional', value: tab.label || '', oninput: (e: any) => upd('label', e.target.value) })
+        ),
 
-        this.field(t('field_url'), m('input.FormControl', { placeholder: '/path or https://…', value: tab.url || '', oninput: (e: any) => upd('url', e.target.value) }), !showUrl),
+        this.field(
+          t('field_url'),
+          m('input.FormControl', { placeholder: '/path or https://…', value: tab.url || '', oninput: (e: any) => upd('url', e.target.value) }),
+          !showUrl
+        ),
 
-        this.field(t('field_visibility'),
-          m('select.FormControl', { value: tab.visibility || 'all', onchange: (e: any) => upd('visibility', e.target.value) },
-            Object.keys(VIS_LABELS).map((k) => m('option', { value: k }, VIS_LABELS[k])))),
+        this.field(
+          t('field_visibility'),
+          m(
+            'select.FormControl',
+            { value: tab.visibility || 'all', onchange: (e: any) => upd('visibility', e.target.value) },
+            Object.keys(VIS_LABELS).map((k) => m('option', { value: k }, VIS_LABELS[k]))
+          )
+        ),
 
-        this.field(t('field_center'),
+        this.field(
+          t('field_center'),
           m('label.MobileTabRow-toggle', { title: t('raised') }, [
             m('input', { type: 'checkbox', checked: !!tab.raised, onchange: (e: any) => upd('raised', e.target.checked) }),
             m('span'),
-          ])),
+          ])
+        ),
       ]),
 
-      Button.component({ className: 'Button Button--icon MobileTabRow-remove', icon: 'fas fa-trash-alt', title: t('remove'), onclick: () => { this.tabs.splice(i, 1); this.commit(); } }),
+      Button.component({
+        className: 'Button Button--icon MobileTabRow-remove',
+        icon: 'fas fa-trash-alt',
+        title: t('remove'),
+        onclick: () => {
+          this.tabs.splice(i, 1);
+          this.commit();
+        },
+      }),
     ]);
   }
 
