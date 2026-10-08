@@ -9,18 +9,7 @@ export interface TabConfig {
   raised?: boolean; // render as the raised center action
 }
 
-export const TAB_TYPES = [
-  'home',
-  'tags',
-  'search',
-  'notifications',
-  'profile',
-  'new-discussion',
-  'login',
-  'logo',
-  'favicon',
-  'link',
-] as const;
+export const TAB_TYPES = ['home', 'tags', 'search', 'notifications', 'profile', 'new-discussion', 'login', 'logo', 'favicon', 'link'] as const;
 
 // Mirrors the original hardcoded bar, so behaviour is unchanged out of the box.
 export const DEFAULT_TABS: TabConfig[] = [

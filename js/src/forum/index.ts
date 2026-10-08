@@ -54,10 +54,7 @@ function renderTab(tab: TabConfig) {
       if (!user) return null;
       const unread = user.unreadNotificationCount() || 0;
       return m('a.MobileTab-tab', { href: app.route('notifications'), oncreate: m.route.link, class: isRoute('notifications') ? 'active' : '' }, [
-        m('span.MobileTab-tab-icon', [
-          iconNode(tab, 'fas fa-bell'),
-          unread > 0 ? m('span.MobileTab-tab-badge', unread > 99 ? '99+' : unread) : null,
-        ]),
+        m('span.MobileTab-tab-icon', [iconNode(tab, 'fas fa-bell'), unread > 0 ? m('span.MobileTab-tab-badge', unread > 99 ? '99+' : unread) : null]),
         labelNode(tab),
       ]);
     }
@@ -74,14 +71,17 @@ function renderTab(tab: TabConfig) {
           ]);
 
     case 'search':
-      return m('button.MobileTab-tab', {
-        onclick: () => (document.querySelector('.Search input, #header-search input') as HTMLElement | null)?.focus(),
-      }, [m('span.MobileTab-tab-icon', iconNode(tab, 'fas fa-search')), labelNode(tab, 'Search')]);
+      return m(
+        'button.MobileTab-tab',
+        {
+          onclick: () => (document.querySelector('.Search input, #header-search input') as HTMLElement | null)?.focus(),
+        },
+        [m('span.MobileTab-tab-icon', iconNode(tab, 'fas fa-search')), labelNode(tab, 'Search')]
+      );
 
     case 'new-discussion': {
       if (!user || !app.forum.attribute('canStartDiscussion')) return null;
-      const onclick = () =>
-        app.composer.load(() => import('flarum/forum/components/DiscussionComposer'), { user }).then(() => app.composer.show());
+      const onclick = () => app.composer.load(() => import('flarum/forum/components/DiscussionComposer'), { user }).then(() => app.composer.show());
       return tab.raised
         ? m('button.MobileTab-bar-plus', { onclick }, iconNode(tab, 'fas fa-plus'))
         : m('button.MobileTab-tab', { onclick }, [m('span.MobileTab-tab-icon', iconNode(tab, 'fas fa-plus')), labelNode(tab, 'New')]);
