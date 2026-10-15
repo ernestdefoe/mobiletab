@@ -3,26 +3,16 @@ import Component, { type ComponentAttrs } from 'flarum/common/Component';
 import Button from 'flarum/common/components/Button';
 import type Stream from 'flarum/common/utils/Stream';
 import type Mithril from 'mithril';
-import { TabConfig, DEFAULT_TABS, TAB_TYPES } from '../../common/tabs';
+import { TabConfig, defaultTabs, TAB_TYPES, tabName } from '../../common/tabs';
 
 declare const m: any;
 
 const t = (k: string) => app.translator.trans('ernestdefoe-mobile-tab.admin.' + k);
 
-const TYPE_LABELS: Record<string, string> = {
-  home: 'Home',
-  tags: 'Tags',
-  search: 'Search',
-  notifications: 'Notifications',
-  profile: 'Profile (avatar)',
-  'new-discussion': 'New discussion',
-  login: 'Log in',
-  logo: 'Site logo',
-  favicon: 'Favicon',
-  link: 'Custom link',
-};
-
-const VIS_LABELS: Record<string, string> = { all: 'Everyone', in: 'Logged in', out: 'Logged out' };
+/** Plain-string form, for attributes and <option> text. */
+const ts = (k: string): string => app.translator.trans('ernestdefoe-mobile-tab.admin.' + k, {}, true);
+const typeLabel = (type: string): string => (TAB_TYPES.includes(type as any) ? ts('type.' + type) : type);
+const VIS_KEYS = ['all', 'in', 'out'];
 
 const DEFAULT_ICONS: Record<string, string> = {
   home: 'far fa-comments',
@@ -55,7 +45,7 @@ export default class TabEditor extends Component<TabEditorAttrs> {
     } catch (e) {
       parsed = null;
     }
-    this.tabs = Array.isArray(parsed) && parsed.length ? parsed : JSON.parse(JSON.stringify(DEFAULT_TABS));
+    this.tabs = Array.isArray(parsed) && parsed.length ? parsed : defaultTabs();
   }
 
   /** Persist the working config into the bound settings stream (marks the page dirty → Save). */
@@ -82,7 +72,7 @@ export default class TabEditor extends Component<TabEditorAttrs> {
             className: 'Button Button--primary Button--icon',
             icon: 'fas fa-plus',
             onclick: () => {
-              this.tabs.push({ type: 'link', icon: 'fas fa-star', label: 'New', url: '/', visibility: 'all' });
+              this.tabs.push({ type: 'link', icon: 'fas fa-star', label: tabName('new'), url: '/', visibility: 'all' });
               this.commit();
             },
           },
@@ -93,7 +83,7 @@ export default class TabEditor extends Component<TabEditorAttrs> {
             className: 'Button Button--text',
             icon: 'fas fa-rotate-left',
             onclick: () => {
-              this.tabs = JSON.parse(JSON.stringify(DEFAULT_TABS));
+              this.tabs = defaultTabs();
               this.commit();
             },
           },
@@ -108,9 +98,9 @@ export default class TabEditor extends Component<TabEditorAttrs> {
     const chip = (tab: TabConfig) => {
       const icon = m('i', { className: this.glyph(tab) });
       if (tab.raised) {
-        return m('.MobileTabPreview-tab.is-raised', { title: TYPE_LABELS[tab.type] || tab.type }, icon);
+        return m('.MobileTabPreview-tab.is-raised', { title: typeLabel(tab.type) }, icon);
       }
-      return m('.MobileTabPreview-tab', { title: TYPE_LABELS[tab.type] || tab.type }, [
+      return m('.MobileTabPreview-tab', { title: typeLabel(tab.type) }, [
         m('span.MobileTabPreview-icon', icon),
         tab.label ? m('span.MobileTabPreview-label', tab.label) : null,
       ]);
@@ -159,7 +149,7 @@ export default class TabEditor extends Component<TabEditorAttrs> {
           m(
             'select.FormControl',
             { value: tab.type, onchange: (e: any) => upd('type', e.target.value) },
-            TAB_TYPES.map((ty) => m('option', { value: ty }, TYPE_LABELS[ty] || ty))
+            TAB_TYPES.map((ty) => m('option', { value: ty }, typeLabel(ty)))
           )
         ),
 
@@ -173,18 +163,22 @@ export default class TabEditor extends Component<TabEditorAttrs> {
               oninput: (e: any) => upd('icon', e.target.value),
               style: showIcon ? '' : 'display:none',
             }),
-            m('span.MobileTabRow-auto', { style: showIcon ? 'display:none' : '' }, tab.type === 'profile' ? 'avatar (auto)' : 'site image (auto)'),
+            m(
+              'span.MobileTabRow-auto',
+              { style: showIcon ? 'display:none' : '' },
+              tab.type === 'profile' ? ts('auto_avatar') : ts('auto_site_image')
+            ),
           ])
         ),
 
         this.field(
           t('field_label'),
-          m('input.FormControl', { placeholder: 'optional', value: tab.label || '', oninput: (e: any) => upd('label', e.target.value) })
+          m('input.FormControl', { placeholder: ts('label_placeholder'), value: tab.label || '', oninput: (e: any) => upd('label', e.target.value) })
         ),
 
         this.field(
           t('field_url'),
-          m('input.FormControl', { placeholder: '/path or https://…', value: tab.url || '', oninput: (e: any) => upd('url', e.target.value) }),
+          m('input.FormControl', { placeholder: ts('url_placeholder'), value: tab.url || '', oninput: (e: any) => upd('url', e.target.value) }),
           !showUrl
         ),
 
@@ -193,7 +187,7 @@ export default class TabEditor extends Component<TabEditorAttrs> {
           m(
             'select.FormControl',
             { value: tab.visibility || 'all', onchange: (e: any) => upd('visibility', e.target.value) },
-            Object.keys(VIS_LABELS).map((k) => m('option', { value: k }, VIS_LABELS[k]))
+            VIS_KEYS.map((k) => m('option', { value: k }, ts('visibility.' + k)))
           )
         ),
 

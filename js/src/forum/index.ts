@@ -1,7 +1,7 @@
 import app from 'flarum/forum/app';
 import { extend } from 'flarum/common/extend';
 import SessionDropdown from 'flarum/forum/components/SessionDropdown';
-import { TabConfig, DEFAULT_TABS } from '../common/tabs';
+import { TabConfig, defaultTabs, tabName } from '../common/tabs';
 
 declare const m: any;
 
@@ -16,7 +16,7 @@ function isRoute(name: string): boolean {
 /** Admin-configured tabs (serialized from settings), falling back to the default bar. */
 function configuredTabs(): TabConfig[] {
   const cfg = app.forum.attribute('mobileTab');
-  return Array.isArray(cfg) && cfg.length ? (cfg as TabConfig[]) : DEFAULT_TABS;
+  return Array.isArray(cfg) && cfg.length ? (cfg as TabConfig[]) : defaultTabs();
 }
 
 function visibleTo(tab: TabConfig, loggedIn: boolean): boolean {
@@ -67,7 +67,7 @@ function renderTab(tab: TabConfig) {
         ? null
         : m('button.MobileTab-tab', { onclick: () => app.modal.show(() => import('flarum/forum/components/LogInModal')) }, [
             m('span.MobileTab-tab-icon', iconNode(tab, 'fas fa-sign-in-alt')),
-            labelNode(tab, 'Log in'),
+            labelNode(tab, tabName('login')),
           ]);
 
     case 'search':
@@ -76,7 +76,7 @@ function renderTab(tab: TabConfig) {
         {
           onclick: () => (document.querySelector('.Search input, #header-search input') as HTMLElement | null)?.focus(),
         },
-        [m('span.MobileTab-tab-icon', iconNode(tab, 'fas fa-search')), labelNode(tab, 'Search')]
+        [m('span.MobileTab-tab-icon', iconNode(tab, 'fas fa-search')), labelNode(tab, tabName('search'))]
       );
 
     case 'new-discussion': {
@@ -84,7 +84,7 @@ function renderTab(tab: TabConfig) {
       const onclick = () => app.composer.load(() => import('flarum/forum/components/DiscussionComposer'), { user }).then(() => app.composer.show());
       return tab.raised
         ? m('button.MobileTab-bar-plus', { onclick }, iconNode(tab, 'fas fa-plus'))
-        : m('button.MobileTab-tab', { onclick }, [m('span.MobileTab-tab-icon', iconNode(tab, 'fas fa-plus')), labelNode(tab, 'New')]);
+        : m('button.MobileTab-tab', { onclick }, [m('span.MobileTab-tab-icon', iconNode(tab, 'fas fa-plus')), labelNode(tab, tabName('new'))]);
     }
 
     case 'logo':

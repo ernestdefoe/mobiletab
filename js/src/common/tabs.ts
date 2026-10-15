@@ -1,4 +1,8 @@
 // Shared tab model used by the forum renderer and the admin editor.
+import app from 'flarum/common/app';
+
+/** A built-in tab name, from the `lib` namespace so both the forum and the admin get it. */
+export const tabName = (key: string): string => app.translator.trans(`ernestdefoe-mobile-tab.lib.tab.${key}`, {}, true);
 
 export interface TabConfig {
   type: string; // home|tags|search|notifications|profile|new-discussion|login|logo|favicon|link
@@ -12,11 +16,12 @@ export interface TabConfig {
 export const TAB_TYPES = ['home', 'tags', 'search', 'notifications', 'profile', 'new-discussion', 'login', 'logo', 'favicon', 'link'] as const;
 
 // Mirrors the original hardcoded bar, so behaviour is unchanged out of the box.
-export const DEFAULT_TABS: TabConfig[] = [
-  { type: 'home', icon: 'far fa-comments', label: 'Home', visibility: 'all' },
-  { type: 'tags', icon: 'fas fa-tag', label: 'Tags', visibility: 'all' },
+// A function so the labels come from the translator once it is loaded.
+export const defaultTabs = (): TabConfig[] => [
+  { type: 'home', icon: 'far fa-comments', label: tabName('home'), visibility: 'all' },
+  { type: 'tags', icon: 'fas fa-tag', label: tabName('tags'), visibility: 'all' },
   { type: 'new-discussion', icon: 'fas fa-plus', label: '', visibility: 'in', raised: true },
-  { type: 'notifications', icon: 'fas fa-bell', label: 'Notifications', visibility: 'in' },
+  { type: 'notifications', icon: 'fas fa-bell', label: tabName('notifications'), visibility: 'in' },
   { type: 'profile', visibility: 'in' },
-  { type: 'login', icon: 'fas fa-sign-in-alt', label: 'Log in', visibility: 'out' },
+  { type: 'login', icon: 'fas fa-sign-in-alt', label: tabName('login'), visibility: 'out' },
 ];
