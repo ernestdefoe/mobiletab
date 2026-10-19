@@ -45,6 +45,17 @@
         z-index: 1025;
     }
 
+    // While the composer is open (not minimized, not hiding), drop
+    // the bar back under it. Dropdowns inside the composer render as
+    // fixed bottom sheets on phones but stay in the composer's
+    // stacking context, so with the bar on top they slid up under
+    // it. ComposerState.hide() sets position HIDDEN and redraws
+    // before the slide-down animation starts, so .normal and
+    // .fullScreen are already gone and the bar is back on top for it.
+    body:has(.Composer.normal, .Composer.fullScreen) .MobileTab-bar {
+        z-index: 1010;
+    }
+
     // ── DiscussionList — remove Flarum's negative phone margin ─
     // Flarum applies margin: 0 -15px on .DiscussionList at @phone.
     // This causes horizontal overflow when our bar is present.
