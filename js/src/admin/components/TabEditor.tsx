@@ -173,7 +173,11 @@ export default class TabEditor extends Component<TabEditorAttrs> {
 
         this.field(
           t('field_label'),
-          m('input.FormControl', { placeholder: ts('label_placeholder'), value: tab.label || '', oninput: (e: any) => upd('label', e.target.value) })
+          m('input.FormControl', {
+            placeholder: tab.type === 'profile' ? ts('label_placeholder_profile') : ts('label_placeholder'),
+            value: tab.label || '',
+            oninput: (e: any) => upd('label', e.target.value),
+          })
         ),
 
         this.field(

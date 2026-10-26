@@ -59,8 +59,14 @@ function renderTab(tab: TabConfig) {
       ]);
     }
 
-    case 'profile':
-      return user ? m('div.MobileTab-tab.MobileTab-tab--session', m(SessionDropdown)) : null;
+    case 'profile': {
+      if (!user) return null;
+      // The label sits under the avatar as the toggle's ::after, read from an attribute: the
+      // tab's own label or the translated default, with {username} for the member's name.
+      const label = (tab.label?.trim() || tabName('profile')).replace('{username}', user.displayName());
+      const stamp = (vnode: any) => vnode.dom.querySelector('.Dropdown-toggle')?.setAttribute('data-mobiletab-label', label);
+      return m('div.MobileTab-tab.MobileTab-tab--session', { oncreate: stamp, onupdate: stamp }, m(SessionDropdown));
+    }
 
     case 'login':
       return user

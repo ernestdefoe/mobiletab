@@ -236,7 +236,10 @@
             // width:100% + text-align:center keeps it centered under
             // the avatar regardless of the text's natural width.
             &::after {
-                content: 'Profile';
+                content: attr(data-mobiletab-label);
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
                 font-size: 10px;
                 font-weight: 500;
                 color: var(--muted-color);
@@ -245,6 +248,8 @@
                 display: block;
                 width: 100%;
                 text-align: center;
+                padding: 0 4px;
+                box-sizing: border-box;
             }
         }
 

@@ -14,6 +14,7 @@ ernestdefoe-mobile-tab:
     field_visibility: Shown to
     field_center: Center
     label_placeholder: optional
+    label_placeholder_profile: "Profile, or '{username}' to show the member name"
     url_placeholder: /path or https://…
     auto_avatar: avatar (auto)
     auto_site_image: site image (auto)
@@ -35,6 +36,7 @@ ernestdefoe-mobile-tab:
   lib:
     tab:
       home: Home
+      profile: Profile
       tags: Tags
       notifications: Notifications
       login: Log in
